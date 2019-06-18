@@ -4,7 +4,8 @@ import { AppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import { Button, Text } from 'native-base';
+
+import AppNavigator from './src/navigation/AppNavigator'
 
 export default class App extends React.Component {
   state = {
@@ -22,11 +23,7 @@ export default class App extends React.Component {
       );
     } else {
       return (
-        <View style={styles.container}>
-          <Button style={{margin: 20}}>
-            <Text>Hello World!</Text>
-          </Button>
-        </View>
+        <AppNavigator />
       );
     }
   }
