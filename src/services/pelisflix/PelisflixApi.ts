@@ -1,5 +1,6 @@
 import axios, {AxiosRequestConfig, AxiosPromise, AxiosInstance} from 'axios';
-import { SecureStore } from 'expo';
+import * as SecureStore from 'expo-secure-store';
+import { AsyncStorage } from 'react-native';
 import Log from "../../utils/Log";
 
 export default class PelisflixApi {
@@ -11,8 +12,6 @@ export default class PelisflixApi {
 
   axios: AxiosInstance;
 
-  currentUser: UserInterface;
-
   constructor() {
     this.config = {
       // `baseURL` will be prepended to `url` unless `url` is absolute.
@@ -21,7 +20,20 @@ export default class PelisflixApi {
       headers: {'Accept': 'application/json'},
     };
     this.axios = axios.create(this.config);
-    this.getStoredJWT();
+  }
+
+  /**
+   * Get stored JWT
+   * @returns {Promise<null|*>}
+   */
+  async getStoredJWT() {
+    const jwt = await SecureStore.getItemAsync('jwt');
+    if (jwt) {
+      this.axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
+      return jwt;
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -51,23 +63,61 @@ export default class PelisflixApi {
    * @returns {AxiosPromise<any>}
    */
   async getCurrentUser(): Promise<UserInterface> {
+    await this.getStoredJWT();
     const user = await this.axios.get(`/users/me`);
-    this.currentUser = user.data;
-    return this.currentUser;
+    return user.data;
+  }
+
+  async getAllGenres(force = false) {
+    let genreList = [];
+    // get the next check time
+    const now = new Date().getTime();
+    const aMonth = 30 * 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    const nextGenreCheck = await AsyncStorage.getItem('nextGenreCheck');
+    const nmCheck = nextGenreCheck !== null ? parseInt(nextGenreCheck) : 0;
+
+    if (now >= nmCheck || force) {
+      const response = await this.axios.get('/genres'); // request
+      console.log('Generos');
+      console.log(response.data);
+      if (Array.isArray(response.data)) {
+        genreList = response.data;
+        await AsyncStorage.setItem('genreList', JSON.stringify(genreList)); // save
+        await AsyncStorage.setItem('nextGenreCheck', `${now + aMonth}`); // save last check time
+      }
+    } else {
+      const response = await AsyncStorage.getItem('genreList'); // get from local
+      genreList = JSON.parse(response);
+    }
+
+    return genreList;
   }
 
   /**
-   * Get stored JWT
-   * @returns {Promise<null|*>}
+   * Get all movies from local storage updated every 24 hours
+   * @param force
    */
-  async getStoredJWT() {
-    const jwt = await SecureStore.getItemAsync('jwt');
-    if (jwt) {
-      this.axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
-      return jwt;
+  async getAllMovies(force = false) {
+    let movieList = [];
+    // get the next check time
+    const now = new Date().getTime();
+    const aDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    const nextMovieCheck = await AsyncStorage.getItem('nextMovieCheck');
+    const nmCheck = nextMovieCheck !== null ? parseInt(nextMovieCheck) : 0;
+
+    if (now >= nmCheck || force) {
+      const response = await this.axios.get('/movies'); // request
+      if (Array.isArray(response.data)) {
+        movieList = response.data;
+        await AsyncStorage.setItem('movieList', JSON.stringify(movieList)); // save
+        await AsyncStorage.setItem('nextMovieCheck', `${now + aDay}`); // save last check time
+      }
     } else {
-      return null;
+      const response = await AsyncStorage.getItem('movieList'); // get from local
+      movieList = JSON.parse(response);
     }
+
+    return movieList;
   }
 
   /**

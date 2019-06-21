@@ -1,11 +1,15 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import {Text} from "native-base";
 import { AppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import {Provider} from 'mobx-react';
 
-import AppNavigator from './src/navigation/AppNavigator'
+import AppNavigator from './src/navigation/AppNavigator';
+import RootStore from "./src/model/RootStore";
+
+const rootStore = new RootStore();
 
 export default class App extends React.Component {
   state = {
@@ -14,22 +18,24 @@ export default class App extends React.Component {
 
   render() {
     if (!this.state.isLoadingComplete) {
+      // @ts-ignore
       return (
         <AppLoading
-          startAsync={this._loadResourcesAsync}
-          onError={this._handleLoadingError}
-          onFinish={this._handleFinishLoading}
+          startAsync={this._loadResourcesAsync.bind(this)}
+          onError={this._handleLoadingError.bind(this)}
+          onFinish={this._handleFinishLoading.bind(this)}
         />
       );
     } else {
       return (
-        <AppNavigator />
+        <Provider rootStore={rootStore}>
+          <AppNavigator/>
+        </Provider>
       );
     }
   }
 
-
-  _loadResourcesAsync = async () => {
+  async _loadResourcesAsync() {
     return Promise.all([
       Asset.loadAsync([
         // require('./assets/images/robot-dev.png'),
@@ -43,22 +49,13 @@ export default class App extends React.Component {
     ]);
   };
 
-  _handleLoadingError = error => {
+  _handleLoadingError(error) {
     // In this case, you might want to report the error to your error
     // reporting service, for example Sentry
     console.warn(error);
   };
 
-  _handleFinishLoading = () => {
+  _handleFinishLoading() {
     this.setState({ isLoadingComplete: true });
   };
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
