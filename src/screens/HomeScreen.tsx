@@ -10,7 +10,6 @@ interface HomeScreenInterface {
   navigation: any,
 }
 
-@observer
 class HomeScreen extends React.Component<HomeScreenInterface> {
 
   state = {
@@ -104,4 +103,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default inject('rootStore')(HomeScreen);
+export default inject('rootStore')(observer(HomeScreen));

@@ -8,6 +8,8 @@ import {Provider} from 'mobx-react';
 import AppNavigator from './src/navigation/AppNavigator';
 import RootStore from "./src/model/RootStore";
 
+import * as FacebookAds from 'expo-ads-facebook';
+
 const rootStore = new RootStore();
 
 export default class App extends React.Component {
@@ -35,6 +37,9 @@ export default class App extends React.Component {
   }
 
   async _loadResourcesAsync() {
+    // https://docs.expo.io/versions/latest/sdk/facebook-ads/
+    FacebookAds.AdSettings.addTestDevice(FacebookAds.AdSettings.currentDeviceHash);
+
     return Promise.all([
       Asset.loadAsync([
         // require('./assets/images/robot-dev.png'),

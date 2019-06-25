@@ -9,6 +9,8 @@ import PelisflixApi from "../services/pelisflix/PelisflixApi";
 
 import Colors from '../theme/colors';
 
+import * as FacebookAds from 'expo-ads-facebook';
+
 interface MovieScreenInterface {
   navigation: any,
 }
@@ -46,7 +48,8 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
           });
         })
         .catch(error => {
-          if (error.toString().indexOf('Request failed')) {
+          Log.e('MovieScreen :: ' + error.toString());
+          if (error.toString().indexOf('Request failed') >= 0) {
             this.props.navigation.navigate('AuthLoading');
           } else {
             this.setState({
@@ -61,6 +64,14 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
         movie: null,
       });
     }
+
+    this._showFBAds();
+  }
+
+  _showFBAds() {
+    return FacebookAds.InterstitialAdManager
+      .showAd("449969829167954_449972429167694")
+      .catch(error => Log.e('MovieScreen :: ' + error.toString()));
   }
 
   _getDim() {
@@ -100,6 +111,8 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
   }
 
   async _onPressServerItem(url) {
+    this._showFBAds();
+
     const adUrl = 'http://sh.st/st/7f221664316597795b8d46e5da817f28/' + url;
     try {
       await WebBrowser.openBrowserAsync(adUrl, {

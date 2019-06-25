@@ -12,7 +12,6 @@ interface SignInProps {
   navigation: any,
 }
 
-@observer
 class SignInScreen extends React.Component<SignInProps> {
   state = {
     dialogVisible: false,
@@ -79,4 +78,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default inject('rootStore')(SignInScreen);
+export default inject('rootStore')(observer(SignInScreen));

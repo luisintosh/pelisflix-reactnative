@@ -12,7 +12,6 @@ interface AuthLoadingProps {
   navigation: any,
 }
 
-@observer
 class AuthLoadingScreen extends React.Component<AuthLoadingProps> {
 
   componentDidMount(): void {
@@ -60,4 +59,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default inject('rootStore')(AuthLoadingScreen);
+export default inject('rootStore')(observer(AuthLoadingScreen));
