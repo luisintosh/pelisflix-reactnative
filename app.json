@@ -9,6 +9,10 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
+    "android": {
+      "icon": "./assets/android_icon.png",
+      "package": "info.pelisflix"
+    },
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
