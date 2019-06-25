@@ -72,14 +72,13 @@ export default class PelisflixApi {
     let genreList = [];
     // get the next check time
     const now = new Date().getTime();
-    const aMonth = 30 * 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    const aMonth = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
     const nextGenreCheck = await AsyncStorage.getItem('nextGenreCheck');
     const nmCheck = nextGenreCheck !== null ? parseInt(nextGenreCheck) : 0;
 
     if (now >= nmCheck || force) {
       const response = await this.axios.get('/genres'); // request
-      console.log('Generos');
-      console.log(response.data);
+
       if (Array.isArray(response.data)) {
         genreList = response.data;
         await AsyncStorage.setItem('genreList', JSON.stringify(genreList)); // save
@@ -106,15 +105,19 @@ export default class PelisflixApi {
     const nmCheck = nextMovieCheck !== null ? parseInt(nextMovieCheck) : 0;
 
     if (now >= nmCheck || force) {
-      const response = await this.axios.get('/movies'); // request
+      const response = await this.axios.get('/movies/all'); // request
+
       if (Array.isArray(response.data)) {
         movieList = response.data;
+        await AsyncStorage.removeItem('movieList');
         await AsyncStorage.setItem('movieList', JSON.stringify(movieList)); // save
         await AsyncStorage.setItem('nextMovieCheck', `${now + aDay}`); // save last check time
+        Log.i('Movies loaded from remote: ' + movieList.length);
       }
     } else {
       const response = await AsyncStorage.getItem('movieList'); // get from local
       movieList = JSON.parse(response);
+      Log.i('Movies loaded from local: ' + movieList.length);
     }
 
     return movieList;
@@ -128,7 +131,7 @@ export default class PelisflixApi {
    * @param limit
    * @returns {Promise<AxiosPromise<any>>}
    */
-  async getMovies({title = null, genreId = null, orderBy = 'date', page = 0, limit = 9}: MovieFinderInterface) {
+  /*async getMovies({title = null, genreId = null, orderBy = 'date', page = 0, limit = 100}: MovieFinderInterface) {
     const start = page * limit;
 
     const params: any = {};
@@ -160,6 +163,13 @@ export default class PelisflixApi {
 
     Log.i(response.data.length);
 
+    return response.data;
+  }*/
+
+  async getMovie(movieId) {
+    const endpoint = '/movies/' + movieId;
+    Log.i('API endpoint: ' + endpoint);
+    const response = await this.axios.get(endpoint);
     return response.data;
   }
 }

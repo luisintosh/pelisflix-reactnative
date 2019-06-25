@@ -34,11 +34,11 @@ export default class MovieGridList extends Component<MovieGridListInterface> {
   /**
    * Open a movie's detail screen
    * @private
-   * @param movie
+   * @param movieId
    */
-  _onPressItem(movie) {
-    Log.i(`A Flatlist item with ID (${movie.id}) has been clicked`);
-    this.props.navigation.navigate('Movie', { movie });
+  _onPressItem(movieId) {
+    Log.i(`A Flatlist item with ID (${movieId}) has been clicked`);
+    this.props.navigation.navigate('Movie', { movieId });
   }
 
   /**
@@ -57,7 +57,7 @@ export default class MovieGridList extends Component<MovieGridListInterface> {
       <MovieGridItem
         id={item.id}
         coverUri={item.poster_path}
-        onPress={() => this._onPressItem(item)}
+        onPress={() => this._onPressItem(item.id)}
         width={this.itemWidth}
         height={this.itemHeight}
         vote_average={item.vote_average}

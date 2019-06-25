@@ -44,7 +44,7 @@ class HomeScreen extends React.Component<HomeScreenInterface> {
     return this.props.rootStore.movieStore.genres.map(genre => {
       // console.log(this.props.rootStore.movieStore.movies[0]);
       const movies = this.state.movies
-        .filter(m => m.genres.find(g => g.id === genre.id));
+        .filter(m => m.genres.find(mg => mg.id === genre.id));
 
       return (
         <Tab key={genre.tmdb_id} heading={genre.name}>

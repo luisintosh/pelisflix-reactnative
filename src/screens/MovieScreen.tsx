@@ -1,27 +1,64 @@
 import React from 'react'
-import {Dimensions, ScrollView, StyleSheet} from 'react-native'
+import {ActivityIndicator, Dimensions, ScrollView, StyleSheet} from 'react-native'
 import {View, Text, ListItem, List, Badge, H1, H2, Right, Button, Body, Icon, Left} from 'native-base'
 import {Image} from "react-native-expo-image-cache"
 import {Stars} from "../components/Stars";
 import Log from "../utils/Log";
 import {WebBrowser} from "expo/build/deprecated.web";
+import PelisflixApi from "../services/pelisflix/PelisflixApi";
 
 interface MovieScreenInterface {
   navigation: any,
 }
 
 export default class MovieScreen extends React.Component<MovieScreenInterface> {
-  // movie object
-  movie;
+  state = {
+    loading: true,
+    movie: null,
+  };
+  // movie id
+  movieId;
   // backdrop path
   backdropDim;
+  // pelisflix api
+  pelisflixApi;
 
   constructor(props) {
     super(props);
     // Get movie from props
-    this.movie = this.props.navigation.getParam('movie', {});
+    this.movieId = this.props.navigation.getParam('movieId', null);
 
     this._getDim();
+    this.pelisflixApi = new PelisflixApi();
+  }
+
+  componentDidMount(): void {
+    if (this.movieId) {
+      this.pelisflixApi.getStoredJWT()
+        .then(() => this.pelisflixApi.getCurrentUser())
+        .then(() => this.pelisflixApi.getMovie(this.movieId))
+        .then(movie => {
+          this.setState({
+            loading: false,
+            movie,
+          });
+        })
+        .catch(error => {
+          if (error.toString().indexOf('Request failed')) {
+            this.props.navigation.navigate('AuthLoading');
+          } else {
+            this.setState({
+              loading: false,
+              movie: null,
+            });
+          }
+        });
+    } else {
+      this.setState({
+        loading: false,
+        movie: null,
+      });
+    }
   }
 
   _getDim() {
@@ -33,31 +70,27 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
   }
 
   _renderGenres() {
-    const genres = this.movie.genres;
+    const genres = this.state.movie.genres;
     return genres.map((g, index) => (<Badge key={index} style={styles.genre}><Text>{g.name}</Text></Badge>));
   }
 
   _renderLinks() {
-    const links = this.movie.videos;
-    return links.map((l) => {
-      const url = l.url;
+    const videos = this.state.movie.videos;
+    return videos.map((v) => {
+      const url = v.url;
       const domainMatches = url.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
       let domainName = domainMatches[1];
       domainName = domainName.replace('www.', '');
       domainName = domainName.indexOf('googleapis.com') >= 0 ? 'google.com' : domainName;
 
+      let lang = v.lang.toUpperCase();
+      lang = lang === 'ES_LA' ? 'LA' : lang;
+
       return (
-        <ListItem key={l.id} onPress={() => this._onPressServerItem(url)} icon>
+        <ListItem key={v.id} onPress={() => this._onPressServerItem(url)} icon>
           <Body><Text>{domainName}</Text></Body>
           <Right>
-            <Button bordered iconLeft small>
-              <Icon name="md-thumbs-up"/>
-              <Text>{l.likes}</Text>
-            </Button>
-            <Button bordered iconLeft small>
-              <Icon name="md-thumbs-down"/>
-              <Text>{l.dislikes}</Text>
-            </Button>
+            <Badge><Text>{lang}</Text></Badge>
           </Right>
         </ListItem>
       );
@@ -76,15 +109,25 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
   }
 
   render() {
-    if (!this.movie || !this.movie.title) {
+    if (this.state.loading) {
       return (
-        <H2>Error!</H2>
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large"/>
+        </View>
+      );
+    }
+
+    if (!this.state.movie) {
+      return (
+        <View style={styles.centerContainer}>
+          <H2>Error!</H2>
+        </View>
       );
     }
 
     const preview = 'https://www.pelisflix.info/wp-content/uploads/2019/04/movie-cover-placeholder.png';
-    const image = this.movie.backdrop_path || this.movie.poster_path;
-    const releaseYear = new Date(this.movie.release_date);
+    const image = this.state.movie.backdrop_path || this.state.movie.poster_path;
+    const releaseYear = new Date(this.state.movie.release_date);
 
     return (
       <ScrollView>
@@ -94,19 +137,19 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
           style={this.backdropDim}
         />
         <View style={styles.container}>
-          <H1>{this.movie.title} ({releaseYear.getFullYear()})</H1>
+          <H1>{this.state.movie.title} ({releaseYear.getFullYear()})</H1>
 
           <ScrollView style={styles.genres} horizontal={true}>
             {this._renderGenres()}
           </ScrollView>
 
           <H2>Sinopsis</H2>
-          <Text>{this.movie.overview}</Text>
+          <Text>{this.state.movie.overview}</Text>
 
           <View style={{height: 20}} />
 
           <H2>Calificación</H2>
-          <Stars voteAverage={this.movie.vote_average} iconSize={32} />
+          <Stars voteAverage={this.state.movie.vote_average} iconSize={32} />
 
           <View style={{height: 20}} />
 
@@ -140,5 +183,10 @@ const styles = StyleSheet.create({
   },
   genre: {
     marginRight: 7,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
