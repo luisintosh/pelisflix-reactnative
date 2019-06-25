@@ -168,7 +168,6 @@ export default class PelisflixApi {
 
   async getMovie(movieId) {
     const endpoint = '/movies/' + movieId;
-    Log.i('API endpoint: ' + endpoint);
     const response = await this.axios.get(endpoint);
     return response.data;
   }

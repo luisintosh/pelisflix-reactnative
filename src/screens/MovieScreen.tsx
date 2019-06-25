@@ -97,9 +97,9 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
     });
   }
 
-  async _onPressServerItem(serverUrl) {
+  async _onPressServerItem(url) {
     try {
-      await WebBrowser.openBrowserAsync(serverUrl, {
+      await WebBrowser.openBrowserAsync(url, {
         toolbarColor: '#000',
         showTitle: false,
       });
