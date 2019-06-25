@@ -3,6 +3,7 @@ import HomeScreen from "../screens/HomeScreen";
 import MovieScreen from "../screens/MovieScreen";
 import AuthLoadingScreen from "../screens/auth/AuthLoadingScreen";
 import SignInScreen from "../screens/auth/SignInScreen";
+import HeaderRightComponent from '../components/HeaderRightComponent';
 
 import Colors from '../theme/colors';
 
@@ -14,7 +15,8 @@ const AppStack = createStackNavigator({
       headerTintColor: Colors.text,
       headerStyle: {
         backgroundColor: Colors.black
-      }
+      },
+      headerRight: HeaderRightComponent(),
     }
   },
   Movie: {
