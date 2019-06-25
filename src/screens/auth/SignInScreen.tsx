@@ -33,7 +33,6 @@ class SignInScreen extends React.Component<SignInProps> {
       }
     }
     catch(error) {
-      console.log('OOPS!!', error);
       this._showDialog(error.toString());
     }
   }
