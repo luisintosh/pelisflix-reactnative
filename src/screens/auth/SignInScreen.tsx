@@ -1,9 +1,11 @@
 import React from 'react'
-import {SafeAreaView, StyleSheet} from 'react-native'
-import { Text, View, Button } from 'native-base'
+import {StyleSheet, ImageBackground, SafeAreaView} from 'react-native'
+import {Text, View, Button, Icon} from 'native-base'
 import * as Facebook from 'expo-facebook'
 import RootStore from "../../model/RootStore";
 import {inject, observer} from "mobx-react";
+
+import Colors from '../../theme/colors';
 
 interface SignInProps {
   rootStore: RootStore,
@@ -40,14 +42,20 @@ class SignInScreen extends React.Component<SignInProps> {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <View>
-          <Button onPress={ this._loginWithFacebook.bind(this) }>
-            <Text>Entrar con Facebook</Text>
-          </Button>
-          {this.state.dialogVisible && <Text>Error: {this.state.dialogMessage}</Text>}
-        </View>
-      </SafeAreaView>
+      <ImageBackground
+        source={ require('../../../assets/splash-wo-logo.png') }
+        style={styles.imgBackground}
+        resizeMode='cover'>
+        <SafeAreaView style={ styles.container }>
+          <View>
+            <Button iconLeft onPress={ this._loginWithFacebook.bind(this) } style={styles.facebookButton}>
+              <Icon name='logo-facebook' />
+              <Text>Entrar con Facebook</Text>
+            </Button>
+            {this.state.dialogVisible && <Text style={styles.text}>Error: {this.state.dialogMessage}</Text>}
+          </View>
+        </SafeAreaView>
+      </ImageBackground>
     );
   };
 }
@@ -55,8 +63,20 @@ class SignInScreen extends React.Component<SignInProps> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imgBackground: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  facebookButton: {
+    backgroundColor: '#3B559A',
+    color: '#fff',
+  },
+  text: {
+    color: Colors.text,
   }
 });
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import {Text} from "native-base";
 import { AppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';

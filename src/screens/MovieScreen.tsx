@@ -1,11 +1,13 @@
 import React from 'react'
 import {ActivityIndicator, Dimensions, ScrollView, StyleSheet} from 'react-native'
-import {View, Text, ListItem, List, Badge, H1, H2, Right, Button, Body, Icon, Left} from 'native-base'
+import {View, Text, ListItem, List, Badge, H1, H2, Right, Button, Body, Icon, Left, Spinner} from 'native-base'
 import {Image} from "react-native-expo-image-cache"
 import {Stars} from "../components/Stars";
 import Log from "../utils/Log";
 import {WebBrowser} from "expo/build/deprecated.web";
 import PelisflixApi from "../services/pelisflix/PelisflixApi";
+
+import Colors from '../theme/colors';
 
 interface MovieScreenInterface {
   navigation: any,
@@ -88,7 +90,7 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
 
       return (
         <ListItem key={v.id} onPress={() => this._onPressServerItem(url)} icon>
-          <Body><Text>{domainName}</Text></Body>
+          <Body><Text style={styles.text}>{domainName}</Text></Body>
           <Right>
             <Badge><Text>{lang}</Text></Badge>
           </Right>
@@ -112,7 +114,7 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
     if (this.state.loading) {
       return (
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large"/>
+          <Spinner color={Colors.primary} />
         </View>
       );
     }
@@ -120,7 +122,7 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
     if (!this.state.movie) {
       return (
         <View style={styles.centerContainer}>
-          <H2>Error!</H2>
+          <H2 style={styles.text}>Error!</H2>
         </View>
       );
     }
@@ -137,18 +139,18 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
           style={this.backdropDim}
         />
         <View style={styles.container}>
-          <H1>{this.state.movie.title} ({releaseYear.getFullYear()})</H1>
+          <H1 style={styles.text}>{this.state.movie.title} ({releaseYear.getFullYear()})</H1>
 
           <ScrollView style={styles.genres} horizontal={true}>
             {this._renderGenres()}
           </ScrollView>
 
-          <H2>Sinopsis</H2>
-          <Text>{this.state.movie.overview}</Text>
+          <H2 style={styles.text}>Sinopsis</H2>
+          <Text style={styles.text}>{this.state.movie.overview}</Text>
 
           <View style={{height: 20}} />
 
-          <H2>Calificación</H2>
+          <H2 style={styles.text}>Calificación</H2>
           <Stars voteAverage={this.state.movie.vote_average} iconSize={32} />
 
           <View style={{height: 20}} />
@@ -175,6 +177,10 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    backgroundColor: Colors.background,
+  },
+  text: {
+    color: Colors.text
   },
   genres: {
     flexDirection: 'row',
@@ -188,5 +194,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.background,
   }
 });

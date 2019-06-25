@@ -1,9 +1,11 @@
 import React from 'react'
 import {SafeAreaView, StyleSheet, ActivityIndicator} from 'react-native'
-import {View} from 'native-base'
+import {Spinner, View, Text} from 'native-base'
 import Log from "../../utils/Log";
 import RootStore from "../../model/RootStore";
 import {inject, observer} from "mobx-react";
+
+import Colors from '../../theme/colors';
 
 interface AuthLoadingProps {
   rootStore: RootStore,
@@ -38,7 +40,8 @@ class AuthLoadingScreen extends React.Component<AuthLoadingProps> {
     return (
       <SafeAreaView style={styles.container}>
         <View>
-          <ActivityIndicator size="large"/>
+          <Spinner color={Colors.primary} />
+          <Text style={styles.text}>Cargando lista de películas...</Text>
         </View>
       </SafeAreaView>
     );
@@ -50,6 +53,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.background
+  },
+  text: {
+    color: Colors.text
   }
 });
 

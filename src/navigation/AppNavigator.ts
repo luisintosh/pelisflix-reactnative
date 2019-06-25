@@ -4,17 +4,27 @@ import MovieScreen from "../screens/MovieScreen";
 import AuthLoadingScreen from "../screens/auth/AuthLoadingScreen";
 import SignInScreen from "../screens/auth/SignInScreen";
 
+import Colors from '../theme/colors';
+
 const AppStack = createStackNavigator({
   Home: {
     screen: HomeScreen,
     navigationOptions: {
-      title: 'Pelisflix'
+      title: 'Pelisflix',
+      headerTintColor: Colors.text,
+      headerStyle: {
+        backgroundColor: Colors.black
+      }
     }
   },
   Movie: {
     screen: MovieScreen,
     navigationOptions: {
-      title: 'Ver Película'
+      title: 'Ver Película',
+      headerTintColor: Colors.text,
+      headerStyle: {
+        backgroundColor: Colors.black
+      }
     }
   }
 });
