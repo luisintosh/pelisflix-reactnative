@@ -6,6 +6,7 @@ import RootStore from "../../model/RootStore";
 import {inject, observer} from "mobx-react";
 
 import Colors from '../../theme/colors';
+import { SecureStore } from 'expo/build/deprecated.web';
 
 interface AuthLoadingProps {
   rootStore: RootStore,
@@ -21,18 +22,21 @@ class AuthLoadingScreen extends React.Component<AuthLoadingProps> {
   async _authStatusObserver() {
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
-
     try {
+      const jwt = await SecureStore.getItemAsync('jwt');
+      if (typeof jwt === 'string' && jwt.length === 0) {
+        throw 'No JWT token found'
+      }
       // trying to get user info
       await this.props.rootStore.authStore.loginUser();
       await this.props.rootStore.movieStore.loadMovies();
+      // redirect to next screen
+      this.props.navigation.navigate('App');
     } catch(error) {
       Log.e(error);
+      this.props.navigation.navigate('Auth');
     }
-    // check user info
-    const user = this.props.rootStore.authStore.user;
-    // redirect to next screen
-    this.props.navigation.navigate(user ? 'App' : 'Auth');
+    
   }
 
   render() {

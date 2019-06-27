@@ -55,7 +55,7 @@ export default class PelisflixApi {
    * Delete JWT key
    */
   async logout() {
-    await SecureStore.setItemAsync('jwt', null);
+    await SecureStore.setItemAsync('jwt', '');
   }
 
   /**

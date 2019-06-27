@@ -1,9 +1,10 @@
 import React from 'react';
-import {Share, Linking, StyleSheet} from 'react-native'
+import {Share, Linking, StyleSheet, AsyncStorage} from 'react-native'
 import {View, Button, Icon} from 'native-base';
 import Log from '../utils/Log';
+import { SecureStore } from 'expo/build/deprecated.web';
 
-export default () => {
+export default (navigation) => {
   const shareUrl = 'https://play.google.com/store/apps/details?id=info.pelisflix';
   const FBurl = 'https://www.facebook.com/Pelisflix-463649424192586';
 
@@ -28,6 +29,17 @@ export default () => {
     }
   }
 
+  const logoutFunc = async () => {
+    try {
+      await AsyncStorage.clear();
+      await SecureStore.setItemAsync('jwt', '');
+      navigation.navigate('AuthLoading');
+      Log.i('App logout');
+    } catch (error) {
+      Log.e(error.message);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Button iconLeft transparent onPress={shareFunc}>
@@ -35,6 +47,9 @@ export default () => {
       </Button>
       <Button iconLeft transparent onPress={followFunc} >
         <Icon name='logo-facebook' style={styles.actionBtn} />
+      </Button>
+      <Button iconLeft transparent onPress={logoutFunc} >
+        <Icon name='md-exit' style={styles.actionBtn} />
       </Button>
     </View>
   );
