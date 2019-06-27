@@ -8,7 +8,13 @@ import HeaderRightComponent from '../components/HeaderRightComponent';
 import Colors from '../theme/colors';
 
 const AppStack = createStackNavigator({
-  Home: {
+  AuthLoading: {
+    screen: AuthLoadingScreen,
+  },
+  Auth: {
+    screen: SignInScreen,
+  },
+  App: {
     screen: HomeScreen,
     navigationOptions: {
       title: 'Pelisflix',
@@ -17,7 +23,7 @@ const AppStack = createStackNavigator({
         backgroundColor: Colors.black
       },
       headerRight: HeaderRightComponent(),
-    }
+    },
   },
   Movie: {
     screen: MovieScreen,
@@ -29,15 +35,8 @@ const AppStack = createStackNavigator({
       }
     }
   }
+}, {
+  initialRouteName: 'AuthLoading',
 });
 
-export default createAppContainer(createSwitchNavigator(
-  {
-    AuthLoading: AuthLoadingScreen,
-    Auth: SignInScreen,
-    App: AppStack,
-  },
-  {
-    initialRouteName: 'AuthLoading'
-  }
-));
+export default createAppContainer(AppStack);
