@@ -12,7 +12,7 @@ export default (navigation) => {
 		try {
 			await Share.share({
 				message:
-					"¡Te recomiendo Descargar esta App para ver Películas Gratis! " + shareUrl,
+					"🔥 ¡Te recomiendo Descargar esta App para ver Películas Gratis! 🤩 " + shareUrl,
 			});
 			Log.i("App shared");
 		} catch (error) {

@@ -7,6 +7,7 @@ import MovieStore from "../store/MovieStore";
 import AuthStore from "../store/AuthStore";
 import * as FacebookAds from "expo-ads-facebook";
 import Log from "../utils/Log";
+import SharePlease from "../utils/SharePlease";
 
 interface HomeScreenInterface {
 	movieStore: MovieStore;
@@ -24,6 +25,9 @@ class HomeScreen extends React.Component<HomeScreenInterface> {
 	componentDidMount(): void {
 		this._filterBySearchTerm("");
 		this._showFBAds();
+
+		// show share message
+		SharePlease();
 	}
 
 	_showFBAds() {
