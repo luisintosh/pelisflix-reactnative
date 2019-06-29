@@ -23,7 +23,7 @@ class SignInScreen extends React.Component<SignInProps> {
 		try {
 			const {type, token} = await Facebook.logInWithReadPermissionsAsync(
 				"1012718225604097",
-				{permissions: ["public_profile"]},
+				{permissions: ["public_profile", "email"]},
 			);
 
 			if (type === "success") {
