@@ -1,66 +1,63 @@
-import React from 'react'
-import {SafeAreaView, StyleSheet, ActivityIndicator} from 'react-native'
-import {Spinner, View, Text} from 'native-base'
+import React from "react";
+import {SafeAreaView, StyleSheet} from "react-native";
+import {Spinner, Text, View} from "native-base";
 import Log from "../../utils/Log";
-import RootStore from "../../model/RootStore";
 import {inject, observer} from "mobx-react";
 
-import Colors from '../../theme/colors';
-import { SecureStore } from 'expo/build/deprecated.web';
+import * as SecureStore from "expo-secure-store";
+import MovieStore from "../../store/MovieStore";
+import AuthStore from "../../store/AuthStore";
 
 interface AuthLoadingProps {
-  rootStore: RootStore,
-  navigation: any,
+	movieStore: MovieStore;
+	authStore: AuthStore;
+	navigation: any;
 }
 
 class AuthLoadingScreen extends React.Component<AuthLoadingProps> {
 
-  componentDidMount(): void {
-    this._authStatusObserver();
-  }
+	componentDidMount(): void {
+		this._authStatusObserver();
+	}
 
-  async _authStatusObserver() {
-    // This will switch to the App screen or Auth screen and this loading
-    // screen will be unmounted and thrown away.
-    try {
-      const jwt = await SecureStore.getItemAsync('jwt');
-      if (typeof jwt === 'string' && jwt.length === 0) {
-        throw 'No JWT token found'
-      }
-      // trying to get user info
-      await this.props.rootStore.authStore.loginUser();
-      await this.props.rootStore.movieStore.loadMovies();
-      // redirect to next screen
-      this.props.navigation.navigate('App');
-    } catch(error) {
-      Log.e(error);
-      this.props.navigation.navigate('Auth');
-    }
-    
-  }
+	async _authStatusObserver() {
+		// This will switch to the App screen or Auth screen and this loading
+		// screen will be unmounted and thrown away.
+		try {
+			const jwt = await SecureStore.getItemAsync("jwt");
+			if (typeof jwt === "string" && jwt.length === 0) {
+				throw "No JWT token found";
+			}
+			// trying to get user info
+			await this.props.authStore.loginUser();
+			await this.props.movieStore.loadMovies();
+			// redirect to next screen
+			this.props.navigation.navigate("App");
+		} catch (error) {
+			Log.e(error);
+			this.props.navigation.navigate("Auth");
+		}
 
-  render() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View>
-          <Spinner color={Colors.primary} />
-          <Text style={styles.text}>Cargando lista de películas...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  };
+	}
+
+	render() {
+		return (
+			<SafeAreaView style={styles.container}>
+				<View>
+					<Spinner color="#F44336" />
+					<Text style={{color: "#F44336"}}>Cargando lista de películas...</Text>
+				</View>
+			</SafeAreaView>
+		);
+	};
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.background
-  },
-  text: {
-    color: Colors.text
-  }
+	container: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
 });
 
-export default inject('rootStore')(observer(AuthLoadingScreen));
+export default inject("movieStore", "authStore")(observer(AuthLoadingScreen));

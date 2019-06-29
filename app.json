@@ -4,11 +4,13 @@
     "slug": "pelisflix-reactnative",
     "privacy": "unlisted",
     "sdkVersion": "33.0.0",
-    "platforms": [
-      "android"
-    ],
-    "version": "1.2.1",
+    "platforms": ["android"],
+    "version": "2.0.0",
     "orientation": "portrait",
+    "primaryColor": "#E50914",
+    "packagerOpts": {
+      "assetExts": ["ttf"]
+    },
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
