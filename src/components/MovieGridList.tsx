@@ -1,5 +1,6 @@
 import React, {Component} from "react";
-import {ActivityIndicator, Dimensions, FlatList, StyleSheet, View} from "react-native";
+import {Dimensions, FlatList, StyleSheet, View} from "react-native";
+import {Text} from "native-base";
 import {Stars} from "./Stars";
 import {observer} from "mobx-react";
 // components
@@ -72,7 +73,7 @@ class MovieGridList extends Component<MovieGridListInterface> {
 
 		return (
 			<View style={{...styles.emptyContainer, height: this.itemHeight}}>
-				<ActivityIndicator color={"red"}/>
+				<Text>Sin resultados...</Text>
 			</View>
 		);
 	}

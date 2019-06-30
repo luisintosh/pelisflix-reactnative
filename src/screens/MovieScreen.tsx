@@ -114,9 +114,11 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
 	async _onPressServerItem(url) {
 		this._showFBAds();
 
-		const adUrl = "http://adf.ly/11249279/" + url;
+		// urls shortener with ads
+		// url = "http://adf.ly/11249279/" + url;
+
 		try {
-			await WebBrowser.openBrowserAsync(adUrl, {
+			await WebBrowser.openBrowserAsync(url, {
 				toolbarColor: "#000",
 				showTitle: false,
 			});
