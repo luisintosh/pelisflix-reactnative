@@ -45,12 +45,12 @@ class SignInScreen extends React.Component<SignInProps> {
 				style={styles.imgBackground}
 				resizeMode="cover">
 				<SafeAreaView style={styles.container}>
-					<View>
+					<View style={{flexDirection: "column"}}>
 						<Button iconLeft onPress={this._loginWithFacebook.bind(this)} style={styles.facebookButton}>
 							<Icon name="logo-facebook"/>
 							<Text>Entrar con Facebook</Text>
 						</Button>
-						{this.state.dialogVisible && <Text>Error: {this.state.dialogMessage}</Text>}
+						{this.state.dialogVisible && <Text style={{color: "#a0a0a0"}}>Error: {this.state.dialogMessage}</Text>}
 					</View>
 				</SafeAreaView>
 			</ImageBackground>
