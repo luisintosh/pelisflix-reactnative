@@ -12,6 +12,9 @@ import * as FacebookAds from "expo-ads-facebook";
 import MovieStore from "../store/MovieStore";
 import AuthStore from "../store/AuthStore";
 
+import {Analytics, PageHit, Event} from "expo-analytics";
+import {Env} from "../env";
+
 interface MovieScreenInterface {
 	movieStore: MovieStore;
 	authStore: AuthStore;
@@ -49,6 +52,9 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
 						loading: false,
 						movie,
 					});
+
+					const analytics = new Analytics(Env.GoogleAnalytics);
+					return analytics.hit(new PageHit(`${movie.title}`));
 				})
 				.catch(error => {
 					Log.e("MovieScreen :: " + error.toString());
@@ -71,7 +77,7 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
 
 	_showFBAds() {
 		return FacebookAds.InterstitialAdManager
-			.showAd("449969829167954_449972429167694")
+			.showAd(Env.FacebookInterstitialAdManager)
 			.catch(error => Log.e("MovieScreen :: " + error.toString()));
 	}
 
@@ -112,16 +118,21 @@ export default class MovieScreen extends React.Component<MovieScreenInterface> {
 	}
 
 	async _onPressServerItem(url) {
-		this._showFBAds();
 
 		// urls shortener with ads
 		// url = "http://adf.ly/11249279/" + url;
+
+		const analytics = new Analytics(Env.GoogleAnalytics);
+		analytics.event(new Event('Video', 'Play', this.state.movie.title))
+			.then(() => Log.i('Sent to analytics'))
+			.catch(e => Log.e(`Analytics: ${e.message}`));
 
 		try {
 			await WebBrowser.openBrowserAsync(url, {
 				toolbarColor: "#000",
 				showTitle: false,
 			});
+			this._showFBAds();
 		} catch (e) {
 			Log.e(e);
 		}

@@ -9,6 +9,9 @@ import * as FacebookAds from "expo-ads-facebook";
 import Log from "../utils/Log";
 import SharePlease from "../utils/SharePlease";
 
+import { Analytics, PageHit } from 'expo-analytics';
+import {Env} from "../env";
+
 interface HomeScreenInterface {
 	movieStore: MovieStore;
 	authStore: AuthStore;
@@ -26,13 +29,18 @@ class HomeScreen extends React.Component<HomeScreenInterface> {
 		this._filterBySearchTerm("");
 		this._showFBAds();
 
+		const analytics = new Analytics(Env.GoogleAnalytics);
+		analytics.hit(new PageHit('Home'))
+			.then(() => Log.i('Sent to analytics'))
+			.catch(e => Log.e(`Analytics: ${e.message}`));
+
 		// show share message
 		SharePlease();
 	}
 
 	_showFBAds() {
 		return FacebookAds.InterstitialAdManager
-			.showAd("449969829167954_449972429167694")
+			.showAd(Env.FacebookInterstitialAdManager)
 			.catch(error => Log.e("MovieScreen :: " + error.toString()));
 	}
 

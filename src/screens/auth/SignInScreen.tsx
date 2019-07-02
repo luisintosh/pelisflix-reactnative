@@ -7,6 +7,12 @@ import {inject, observer} from "mobx-react";
 import MovieStore from "../../store/MovieStore";
 import AuthStore from "../../store/AuthStore";
 
+import {Analytics, PageHit} from "expo-analytics";
+import Constants from 'expo-constants'
+
+import Log from "../../utils/Log";
+import {Env} from "../../env";
+
 interface SignInProps {
 	movieStore: MovieStore;
 	authStore: AuthStore;
@@ -19,10 +25,17 @@ class SignInScreen extends React.Component<SignInProps> {
 		dialogMessage: "",
 	};
 
+	componentDidMount(): void {
+		const analytics = new Analytics(Env.GoogleAnalytics);
+		analytics.hit(new PageHit('Login'))
+			.then(() => Log.i('Sent to analytics'))
+			.catch(e => Log.e(`Analytics: ${e.message}`));
+	}
+
 	async _loginWithFacebook() {
 		try {
 			const {type, token} = await Facebook.logInWithReadPermissionsAsync(
-				"1012718225604097",
+				Constants.manifest.facebookAppId,
 				{permissions: ["public_profile", "email"]},
 			);
 
